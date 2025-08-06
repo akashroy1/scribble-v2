@@ -1,0 +1,61 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Scribble Clone</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+    <!-- <div id="nameModal">
+        <div>
+            <h2>Enter your nickname</h2>
+            <input id="nicknameInput" maxlength="16" autocomplete="off" autofocus>
+            <button id="joinBtn">Join</button>
+        </div>
+    </div> -->
+    <div class="game-dashboard">
+        <div>
+            <h1>🎮 Players</h1>
+            <div class="players-list">
+                <div class="user-item">
+                    <div class="user-name">Alice <span class="drawing-indicator">✏️ Drawing</span></div>
+                    <div class="user-score">Score: 150 points</div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="canvas-wrapper">
+                <canvas id="board" width="800" height="600"></canvas>
+            </div>
+            <button id="clear">🗑️ Clear Board</button>
+            <div class="game-info">
+                <div class="current-word">Current Word: _ _ _ _ _ (5 letters)</div>
+                <div class="time-remaining">⏰ Time Remaining: 1:23</div>
+            </div>
+        </div>
+        <div>
+            <div class="chat-header">
+                💬 Chat
+            </div>
+            <div id="chat">
+                <div class="message">
+                    <div class="message-user">Diana <span class="message-time">2:33 PM</span></div>
+                    <div class="message-text">Hmm, looks like something with wheels...</div>
+                </div>
+            </div>
+            <div class="input-container">
+                <input id="guess" autocomplete="off" placeholder="Type your guess or message..." />
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./script.js" defer></script>
+    <script>
+        console.log("Inline Style")
+    </script>
+</body>
+
+</html>
