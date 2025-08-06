@@ -46,14 +46,13 @@
     }, 1000);
   }
 
-  // let players = {};
+  let players = {};
 
   io.on('connection', (socket) => {
-    // socket.on('registerName', (name) => {
-    //   players[socket.id] = { name, score: 0, isDrawing: false };
-    //   console.log(players)
-    //   io.emit('playersUpdate', Object.values(players)); // send updated player list
-    // });
+    socket.on('registerName', (name) => {
+      players[socket.id] = { name, score: 0, isDrawing: false };
+      io.emit('playersUpdate', Object.values(players)); // send updated player list
+    });
 
     socket.emit('roundData', { wordMask, wordLength: currentWord.length, timeLeft: roundTime });
     socket.on('startRound', startRound);
@@ -65,9 +64,8 @@
 
     // Handle disconnect
     socket.on('disconnect', () => {
-      // delete players[socket.id];
-      // io.emit('playersUpdate', Object.values(players));
-      console.log('User logged out')
+      delete players[socket.id];
+      io.emit('playersUpdate', Object.values(players));
     });
 
     // Clear Board Logic
@@ -76,12 +74,15 @@
     });
 
     socket.on('guess', (msg) => {
+      const player = players[socket.id];
       // Check if correct
       if (msg.toLowerCase() === currentWord.toLowerCase()) {
-        io.emit('chat', `${socket.id} guessed the word!`);
+        players[socket.id].score+=10;
+        io.emit('playersUpdate', Object.values(players));
+        io.emit('chat', {player, msg: "Guessed the word correct.", correct:true});
         // Optionally: Choose a new word, next turn, etc.
       } else {
-        io.emit('chat', `${socket.id}: ${msg}`);
+        io.emit('chat', {player, msg, correct:false});
       }
     });
 

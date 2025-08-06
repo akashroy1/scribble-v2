@@ -1,39 +1,19 @@
-// const nameModal = document.getElementById('nameModal');
-// const nicknameInput = document.getElementById('nicknameInput');
-// const joinBtn = document.getElementById('joinBtn');
+const nameModal = document.getElementById('nameModal');
+const nicknameInput = document.getElementById('nicknameInput');
+const joinBtn = document.getElementById('joinBtn');
 
-// let playerName = '';
+let playerName = '';
 
-// function joinGame() {
-//     console.log('JoinGame Called')
-//     playerName = nicknameInput.value.trim() || 'Anonymous';
-//     socket.emit('registerName', playerName);
-//     nameModal.style.display = 'none';
-// }
+function joinGame() {
+    playerName = nicknameInput.value.trim() || 'Anonymous';
+    socket.emit('registerName', playerName);
+    nameModal.style.display = 'none';
+}
 
-// joinBtn.onclick = joinGame;
-// nicknameInput.onkeydown = (e) => {
-//     if (e.key === 'Enter') joinGame();
-// };
-
-// const playerListDiv = document.querySelector('.players-list');
-
-// socket.on('playersUpdate', (players) => {
-//   playerListDiv.innerHTML = '';
-//   players.forEach(player => {
-//     const userDiv = document.createElement('div');
-//     userDiv.className = 'user-item';
-//     userDiv.innerHTML = `
-//       <div class="user-name">
-//         ${player.name}
-//         ${player.isDrawing ? '<span class="drawing-indicator">✏️ Drawing</span>' : ''}
-//       </div>
-//       <div class="user-score">Score: ${player.score} points</div>
-//     `;
-//     playerListDiv.appendChild(userDiv);
-//   });
-// });
-
+joinBtn.onclick = joinGame;
+nicknameInput.onkeydown = (e) => {
+    if (e.key === 'Enter') joinGame();
+};
 
 const socket = io();
 const canvas = document.getElementById('board');
@@ -42,6 +22,25 @@ let drawing = false;
 
 const currentWordDiv = document.querySelector('.current-word');
 const timeRemainingDiv = document.querySelector('.time-remaining');
+const playerListDiv = document.querySelector('.players-list');
+
+// Player List Update
+socket.on('playersUpdate', (players) => {
+  console.log(players)
+  playerListDiv.innerHTML = '';
+  players.forEach(player => {
+    const userDiv = document.createElement('div');
+    userDiv.className = 'user-item';
+    userDiv.innerHTML = `
+      <div class="user-name">
+        ${player.name}
+        ${player.isDrawing ? '<span class="drawing-indicator">✏️ Drawing</span>' : ''}
+      </div>
+      <div class="user-score">Score: ${player.score} points</div>
+    `;
+    playerListDiv.appendChild(userDiv);
+  });
+});
 
 // Listen for round data (update word mask & timer)
 socket.on('roundData', ({ wordMask, wordLength, timeLeft }) => {
@@ -99,9 +98,17 @@ guessInput.addEventListener('keydown', (e) => {
 });
 
 // Display chat messages
-socket.on('chat', (msg) => {
+socket.on('chat', ({player, msg, correct}) => {
     const el = document.createElement('div');
-    el.innerText = msg;
+    const now = new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+    el.className = 'message';
+    el.innerHTML = `
+      <div class="message-user">${player.name} <span class="message-time">${now}</span></div>
+      <div class="message-text">${msg}</div>
+    `;
+    if(correct){
+        el.style.backgroundColor = '#89F587';
+    }
     chat.appendChild(el);
     chat.scrollTop = chat.scrollHeight;
 });
